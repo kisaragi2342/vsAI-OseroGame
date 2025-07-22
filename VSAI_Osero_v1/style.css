@@ -1,0 +1,304 @@
+body {
+    /* bodyは、ウェブページ全体の見た目（スタイル）を設定する部分です。 */
+    font-family: 'Roboto', 'M PLUS Rounded 1c', sans-serif; /* Google Fontsで指定されたフォントを適用します。これにより、ウェブページ全体の文字のデザインが変わります。 */
+    display: flex; /* この要素（body）の中身を、柔軟なボックス（Flexbox）として配置します。 */
+    flex-direction: column; /* Flexboxの子要素を縦方向に並べます。（通常は横並びですが、これを指定すると縦並びになります） */
+    align-items: center; /* Flexboxの子要素を、主軸（この場合は縦方向）に対して中央に揃えます。 */
+    justify-content: center; /* Flexboxの子要素を、交差軸（この場合は横方向）に対して中央に揃えます。 */
+    min-height: 100vh; /* ページの最小の高さをビューポート（画面表示領域）の高さの100%に設定します。これにより、内容が少なくてもページ全体に背景が広がります。 */
+    margin: 0; /* ページの周囲の余白（マージン）を0に設定します。 */
+    background: linear-gradient(to bottom right, #6DD5FA, #2980B9); /* ページの背景色を、左上から右下に向かって水色から濃い青へ変化するグラデーションにします。 */
+    color: #333; /* ページ全体の文字の色を濃い灰色（#333）に設定します。 */
+    padding: 10px; /* ページ全体のコンテンツの周囲に内側の余白（パディング）を10ピクセル設けます。 */
+    box-sizing: border-box; /* 要素の幅と高さを計算する際、パディングとボーダー（枠線）をその中に含めるようにします。これにより、レイアウトが予測しやすくなります。 */
+    overflow-x: hidden; /* 横方向のコンテンツがはみ出した場合にスクロールバーを表示しないようにします。これにより、意図しない横スクロールを防ぎます。 */
+}
+
+/* --- Title Screen Styles (タイトル画面のスタイル設定です) --- */
+#title-screen {
+    /* タイトル画面のコンテナ（要素の塊）に対するスタイル設定です。 */
+    display: flex; /* このコンテナの子要素をFlexboxとして配置します。 */
+    flex-direction: column; /* 子要素を縦方向に並べます。 */
+    align-items: center; /* 子要素を横方向の中央に揃えます。 */
+    padding: 30px 40px; /* 内側の余白を、上下30ピクセル、左右40ピクセルに設定します。少し広めのパディングです。 */
+    background-color: rgba(255, 255, 255, 0.95); /* 背景色を、ほとんど不透明な白色（透明度95%）にします。少し透明感があります。 */
+    border-radius: 15px; /* 要素の角を15ピクセル丸くします。 */
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15); /* 要素に影をつけます。影のX軸オフセット0、Y軸オフセット8ピクセル、ぼかし25ピクセル、色は透明度15%の黒です。 */
+    text-align: center; /* この要素内のテキストを中央揃えにします。 */
+    width: 90%; /* 親要素の幅の90%を占めるようにします。 */
+    max-width: 500px; /* 要素の最大幅を500ピクセルに制限します。これにより、大きな画面でも広がりすぎません。 */
+}
+
+#title-screen h1 {
+    /* タイトル画面の見出し（h1要素）に対するスタイル設定です。 */
+    font-family: 'M PLUS Rounded 1c', sans-serif; /* タイトル専用のフォントを適用します。 */
+    font-size: 2.8em; /* 文字の大きさを親要素の約2.8倍に設定します。少し大きく表示されます。 */
+    font-weight: 700; /* 文字の太さを700（太字）に設定します。 */
+    color: #1A237E; /* 文字の色を濃い青色（#1A237E）に設定します。 */
+    margin-bottom: 25px; /* 要素の下に25ピクセルの余白を設けます。 */
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1); /* テキストに影をつけます。影のX軸オフセット1、Y軸オフセット1、ぼかし2ピクセル、色は透明度10%の黒です。 */
+}
+
+#board-size-selection h2, #difficulty-selection h2 {
+    /* 盤面サイズ選択と難易度選択の各見出し（h2要素）に対する共通のスタイル設定です。 */
+    font-size: 1.2em; /* 文字の大きさを親要素の約1.2倍に設定します。 */
+    margin-bottom: 12px; /* 要素の下に12ピクセルの余白を設けます。 */
+    color: #333; /* 文字の色を濃い灰色（#333）に設定します。 */
+    font-weight: 700; /* 文字の太さを700（太字）に設定します。 */
+}
+
+#board-size-selection div {
+    /* 盤面サイズ選択の中にあるdiv要素（入力フィールドとラベルを囲む部分）に対するスタイル設定です。 */
+    margin-bottom: 10px; /* 要素の下に10ピクセルの余白を設けます。 */
+    display: flex; /* この要素の子要素をFlexboxとして配置します。 */
+    justify-content: center; /* 子要素を横方向の中央に揃えます。 */
+    align-items: center; /* 子要素を縦方向の中央に揃えます。 */
+    gap: 10px; /* Flexboxの子要素間の隙間を10ピクセルに設定します。 */
+}
+#board-size-selection label {
+    /* 盤面サイズ選択のラベルに対するスタイル設定です。 */
+    font-size: 1em; /* 文字の大きさを親要素と同じサイズに設定します。 */
+}
+#board-size-selection input[type="number"] {
+    /* 盤面サイズの数値入力欄に対するスタイル設定です。 */
+    width: 65px; /* 幅を65ピクセルに設定します。 */
+    padding: 8px; /* 内側の余白を8ピクセルに設定します。 */
+    border: 1px solid #bbb; /* 1ピクセル幅の実線ボーダーを薄い灰色（#bbb）で設定します。 */
+    border-radius: 5px; /* 角を5ピクセル丸くします。 */
+    font-size: 1em; /* 文字の大きさを親要素と同じサイズに設定します。 */
+    text-align: center; /* 入力されたテキストを中央揃えにします。 */
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); /* 内側に影をつけます。X軸オフセット0、Y軸オフセット1、ぼかし3ピクセル、色は透明度10%の黒です。 */
+}
+
+.difficulty-button, #start-game-button, .game-control-button {
+    /* 難易度選択ボタン、ゲーム開始ボタン、ゲーム操作ボタンの共通のスタイル設定です。 */
+    padding: 10px 20px; /* 内側の余白を、上下10ピクセル、左右20ピクセルに設定します。 */
+    margin: 5px; /* 外側の余白を5ピクセルに設定します。 */
+    font-size: 1em; /* 文字の大きさを親要素と同じサイズに設定します。 */
+    font-weight: bold; /* 文字を太字に設定します。 */
+    border: none; /* 枠線をなくします。 */
+    background-color: #3498db; /* 背景色を青色（#3498db）に設定します。 */
+    color: white; /* 文字の色を白色に設定します。 */
+    border-radius: 8px; /* 角を8ピクセル丸くします。丸みが少し強くなります。 */
+    cursor: pointer; /* マウスカーソルを、クリック可能なことを示す指の形に変化させます。 */
+    transition: all 0.2s ease-out; /* 全てのCSSプロパティの変化を0.2秒かけて滑らかに（ease-outで徐々に遅く）行います。 */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15); /* 影をつけます。X軸オフセット0、Y軸オフセット2、ぼかし5ピクセル、色は透明度15%の黒です。 */
+}
+.difficulty-button:hover, #start-game-button:hover, .game-control-button:hover {
+    /* ボタンにマウスカーソルが重なったとき（ホバー時）のスタイル設定です。 */
+    transform: translateY(-2px); /* 要素をY軸方向（上方向）に2ピクセル移動させます。少し浮き上がったように見えます。 */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2); /* 影をより濃く、広げます。X軸オフセット0、Y軸オフセット4、ぼかし8ピクセル、色は透明度20%の黒です。 */
+}
+.difficulty-button.selected {
+    /* 選択された難易度ボタンに適用されるスタイル設定です。JavaScriptでこのクラスが追加されます。 */
+    background-color: #1A237E; /* 背景色を濃い青色（#1A237E）に設定します。 */
+    color: #fff; /* 文字の色を白色に設定します。 */
+    border-color: #1A237E; /* 枠線の色を濃い青色に設定します。 */
+    transform: translateY(0); /* 移動した位置を元の0に戻します。 */
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); /* 内側に影をつけます。X軸オフセット0、Y軸オフセット2、ぼかし4ピクセル、色は透明度20%の黒です。 */
+}
+#start-game-button {
+    /* ゲーム開始ボタン固有のスタイル設定です。 */
+    background-color: #2ecc71; /* 背景色を緑色（#2ecc71）に設定します。 */
+    padding: 12px 35px; /* 内側の余白を、上下12ピクセル、左右35ピクセルに設定します。 */
+    font-size: 1.2em; /* 文字の大きさを親要素の約1.2倍に設定します。 */
+    margin-top: 20px; /* 要素の上に20ピクセルの余白を設けます。 */
+}
+#start-game-button:hover { background-color: #27ae60; } /* ゲーム開始ボタンにマウスが重なったときの背景色を少し濃い緑に設定します。 */
+
+.error-message {
+    /* エラーメッセージが表示される要素に対するスタイル設定です。 */
+    color: #e74c3c; /* 文字の色を赤色（#e74c3c）に設定します。 */
+    font-size: 0.9em; /* 文字の大きさを親要素の約0.9倍に設定します。 */
+    margin-top: 10px; /* 要素の上に10ピクセルの余白を設けます。 */
+    min-height: 1.2em; /* 最小の高さを文字の約1.2倍に設定します。これにより、エラーメッセージがない時でもレイアウトが崩れにくくなります。 */
+}
+
+/* --- Game Screen Styles (ゲーム画面のスタイル設定です) --- */
+#game-screen {
+    /* ゲーム画面のコンテナに対するスタイル設定です。 */
+    display: none; /* 初期状態ではこの要素を非表示にします。JavaScriptでゲーム開始時に表示されます。 */
+    flex-direction: column; /* 子要素を縦方向に並べます。 */
+    align-items: center; /* 子要素を横方向の中央に揃えます。 */
+    width: 100%; /* 幅を親要素の100%に設定します。 */
+    max-width: 95vw; /* 要素の最大幅をビューポート（画面表示領域）の幅の95%に制限します。これにより、横幅が広がりすぎず、特にスマホなどの横幅が狭い画面でも見やすくなります。 */
+    padding: 15px; /* 内側の余白を15ピクセルに設定します。 */
+    box-sizing: border-box; /* 要素の幅と高さを計算する際にパディングとボーダーを含めるようにします。 */
+}
+
+#game-controls-top {
+    /* ゲーム画面上部のコントロールボタン群を囲むコンテナのスタイル設定です。 */
+    display: flex; /* 子要素をFlexboxとして配置します。 */
+    justify-content: space-around; /* 子要素をコンテナ内で均等な間隔で配置します。ボタンが左右に広がります。 */
+    align-items: center; /* 子要素を縦方向の中央に揃えます。 */
+    width: 100%; /* 幅を親要素の100%に設定します。 */
+    max-width: 550px; /* 最大幅を550ピクセルに制限します。これは盤面より少し広めの設定です。 */
+    margin-bottom: 15px; /* 要素の下に15ピクセルの余白を設けます。 */
+}
+.game-control-button {
+    /* 個別のゲーム操作ボタンに対するスタイル調整です。（共通スタイルは .difficulty-button に設定済み） */
+    font-size: 0.9em; /* 文字の大きさを少し小さくします。 */
+    padding: 8px 15px; /* 内側の余白を、上下8ピクセル、左右15ピクセルに設定します。 */
+}
+#back-to-title-button { background-color: #e74c3c; } /* タイトルへ戻るボタンの背景色を赤系に設定します。 */
+#mute-button { background-color: #f39c12; } /* ミュートボタンの背景色をオレンジ系に設定します。 */
+#reset-button { background-color: #9b59b6; } /* リセットボタンの背景色を紫系に設定します。 */
+#mute-button.muted { background-color: #7f8c8d; } /* ミュート状態のミュートボタンの背景色をグレーに設定します。 */
+
+
+#current-game-info-display {
+    /* 現在のゲーム情報（盤面サイズや難易度）を表示する要素のスタイル設定です。 */
+    font-size: 1.1em; /* 文字の大きさを親要素の約1.1倍に設定します。 */
+    color: #fff; /* 文字の色を白色に設定します。 */
+    font-weight: bold; /* 文字を太字に設定します。 */
+    text-align: center; /* テキストを中央揃えにします。 */
+    margin-bottom: 10px; /* 要素の下に10ピクセルの余白を設けます。 */
+    padding: 8px; /* 内側の余白を8ピクセルに設定します。 */
+    background-color: rgba(0,0,0,0.3); /* 背景色を、透明度30%の黒色に設定します。 */
+    border-radius: 5px; /* 角を5ピクセル丸くします。 */
+    width: 100%; /* 幅を親要素の100%に設定します。 */
+    max-width: 500px; /* 最大幅を500ピクセルに制限します。 */
+}
+
+#game-info {
+    /* ゲーム情報（スコアや現在のターン）を表示するボックスのスタイル設定です。 */
+    margin-bottom: 10px; /* 要素の下に10ピクセルの余白を設けます。 */
+    padding: 12px; /* 内側の余白を12ピクセルに設定します。 */
+    background-color: rgba(255, 255, 255, 0.9); /* 背景色を、ほとんど不透明な白色に設定します。 */
+    border-radius: 8px; /* 角を8ピクセル丸くします。 */
+    text-align: center; /* テキストを中央揃えにします。 */
+    width: 100%; /* 幅を親要素の100%に設定します。 */
+    max-width: 450px; /* 最大幅を450ピクセルに制限します。 */
+    box-sizing: border-box; /* 要素の幅と高さを計算する際にパディングとボーダーを含めるようにします。 */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1); /* 影をつけます。X軸オフセット0、Y軸オフセット2、ぼかし8ピクセル、色は透明度10%の黒です。 */
+}
+#game-info p { margin: 6px 0; font-size: 1em; } /* ゲーム情報内の段落（p要素）の上下の余白を6ピクセル、文字サイズを親要素と同じに設定します。 */
+#current-turn-indicator {
+    /* 現在のターン表示（「あなたの番です」など）のスタイル設定です。 */
+    font-weight: bold; /* 文字を太字に設定します。 */
+    color: #1A237E; /* 文字の色を濃い青色に設定します。 */
+    margin-top: 8px; /* 要素の上に8ピクセルの余白を設けます。 */
+    font-size: 1.1em; /* 文字の大きさを親要素の約1.1倍に設定します。 */
+}
+
+#board-container-wrapper {
+    /* オセロ盤全体を囲むコンテナのスタイル設定です。 */
+    width: 100%; /* 幅を親要素の100%に設定します。 */
+    max-width: 500px; /* 最大幅を500ピクセルに制限します。スマホなどの画面でも見やすいように調整されています。 */
+    margin: 10px auto; /* 上下に10ピクセルの余白を設け、左右は自動で中央揃えにします。 */
+    padding: 10px; /* 内側の余白を10ピクセルに設定します。これにより、盤の周りに少し余白ができます。 */
+    background-color: #004d00; /* 背景色を濃い緑色（#004d00）に設定します。これは盤の土台の色になります。 */
+    border-radius: 10px; /* 角を10ピクセル丸くします。 */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3); /* 影をつけます。X軸オフセット0、Y軸オフセット5、ぼかし15ピクセル、色は透明度30%の黒です。 */
+}
+#board-container {
+    /* 実際のオセロ盤（マス目が配置される場所）のスタイル設定です。 */
+    display: grid; /* この要素の中身をグリッドレイアウトで配置します。（マス目を格子状に並べるため） */
+    border: 2px solid #111; /* 2ピクセル幅の実線ボーダーを濃い灰色（#111）で設定します。これが盤の枠線になります。 */
+    width: 100%; /* 幅を親要素の100%に設定します。 */
+    aspect-ratio: 1 / 1; /* アスペクト比を1:1（正方形）に設定します。これにより、盤面が常に正方形に保たれます。 */
+    background-color: #006400; /* 背景色を緑色（#006400）に設定します。これが盤面の緑色になります。 */
+}
+
+.cell {
+    /* オセロ盤の各マス目に対するスタイル設定です。 */
+    border: 1px solid rgba(0,0,0,0.2); /* 1ピクセル幅の実線ボーダーを、透明度20%の黒色で設定します。マス目の線が少し薄くなります。 */
+    display: flex; /* この要素の子要素（石）をFlexboxとして配置します。 */
+    justify-content: center; /* 子要素を横方向の中央に揃えます。 */
+    align-items: center; /* 子要素を縦方向の中央に揃えます。 */
+    cursor: pointer; /* マウスカーソルを、クリック可能なことを示す指の形に変化させます。 */
+    box-sizing: border-box; /* 要素の幅と高さを計算する際にパディングとボーダーを含めるようにします。 */
+    transition: background-color 0.2s; /* 背景色の変化を0.2秒かけて滑らかに行います。 */
+    position: relative; /* この要素内の絶対配置された子要素（例: 置ける場所のハイライト）の基準位置となります。アニメーション用です。 */
+}
+.cell.playable::before {
+    /* 石を置けるマス目に表示される、ハイライト（薄い円）のスタイル設定です。`::before`は、その要素の直前に仮想的な要素を生成します。 */
+    content: ''; /* 空のコンテンツを指定します。これがないと擬似要素は表示されません。 */
+    position: absolute; /* 親要素（.cell）を基準に絶対位置で配置します。 */
+    width: 60%; /* 幅をマス目の60%に設定します。 */
+    height: 60%; /* 高さをマス目の60%に設定します。 */
+    border-radius: 50%; /* 角を50%丸くすることで、完全な円形にします。 */
+    background-color: rgba(255, 255, 255, 0.2); /* 背景色を、透明度20%の白色に設定します。薄いハイライトです。 */
+    pointer-events: none; /* この擬似要素の上で発生するマウスイベント（クリックなど）を透過させ、その下の要素（マス目自体）がクリックされるようにします。これにより、ハイライトがクリックを妨げません。 */
+    animation: pulse 1.5s infinite ease-in-out; /* `pulse`という名前のアニメーションを1.5秒かけて無限に繰り返し、動きをスムーズに（ease-in-out）行います。 */
+}
+.cell.playable:hover::before {
+    /* 石を置けるマス目にマウスカーソルが重なったとき、そのハイライトのスタイル設定です。 */
+    background-color: rgba(255, 255, 255, 0.3); /* 背景色を透明度30%の白色に少し濃くします。 */
+}
+
+@keyframes pulse {
+    /* `pulse`という名前のアニメーションの定義です。要素が脈動するように見せます。 */
+    0% { transform: scale(0.9); opacity: 0.7; } /* アニメーションの開始時（0%）は、要素を0.9倍に縮小し、透明度を70%にします。 */
+    50% { transform: scale(1); opacity: 1; } /* アニメーションの中間点（50%）では、要素を元のサイズに戻し、透明度を100%（完全に不透明）にします。 */
+    100% { transform: scale(0.9); opacity: 0.7; } /* アニメーションの終了時（100%）は、開始時と同じ状態に戻ります。これにより、無限ループで自然な脈動が表現されます。 */
+}
+
+
+.disc {
+    /* オセロの石（ディスク）に対するスタイル設定です。 */
+    width: 82%; /* 親要素（マス目）の幅の82%に設定します。石が少し大きく見えます。 */
+    height: 82%; /* 親要素の高さの82%に設定します。 */
+    border-radius: 50%; /* 角を50%丸くすることで、完全な円形にします。 */
+    box-shadow: inset 0 -2px 3px rgba(0,0,0,0.3), /* 石の内側に影をつけます。これにより立体感が出ます。X軸オフセット0、Y軸オフセット-2、ぼかし3、色は透明度30%の黒です。 */
+                0 2px 3px rgba(0,0,0,0.3);      /* 石の外側に影をつけます。X軸オフセット0、Y軸オフセット2、ぼかし3、色は透明度30%の黒です。 */
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.3s ease-out; /* transform（変形）とbackground-color（背景色）の変化を滑らかに行います。transformは0.5秒のカスタムアニメーションカーブ、background-colorは0.3秒のease-outです。これが反転アニメーションの動きになります。 */
+    transform-style: preserve-3d; /* 3D変形が子要素にも適用されるようにします。石がひっくり返る際に裏面も見せるために必要です。 */
+}
+
+.disc.black {
+    /* 黒い石の背景スタイルです。 */
+    background: radial-gradient(circle at 30% 30%, #555, #000); /* 中心から広がる放射状のグラデーションで、暗い灰色から黒へ変化します。これにより、光沢のある黒い石に見えます。 */
+}
+.disc.white {
+    /* 白い石の背景スタイルです。 */
+    background: radial-gradient(circle at 30% 30%, #fff, #ccc); /* 中心から広がる放射状のグラデーションで、白色から薄い灰色へ変化します。これにより、光沢のある白い石に見えます。 */
+}
+
+.disc.flipping-to-white {
+    /* 石が白にひっくり返るアニメーションを適用するクラスです。 */
+    animation: flipToWhite 0.5s forwards; /* `flipToWhite`アニメーションを0.5秒かけて実行します。`forwards`は、アニメーション終了後にその最終状態を維持することを意味します。 */
+}
+.disc.flipping-to-black {
+    /* 石が黒にひっくり返るアニメーションを適用するクラスです。 */
+    animation: flipToBlack 0.5s forwards; /* `flipToBlack`アニメーションを0.5秒かけて実行し、最終状態を維持します。 */
+}
+
+@keyframes flipToWhite {
+    /* `flipToWhite`という名前のアニメーションの定義です。（黒から白へ反転） */
+    0% { transform: rotateY(0deg); background: radial-gradient(circle at 30% 30%, #555, #000); } /* アニメーション開始時（0%）は、回転なし（0度）で黒い石の状態です。 */
+    50% { transform: rotateY(90deg); background: radial-gradient(circle at 30% 30%, #555, #000); } /* アニメーション中間点（50%）では、Y軸を中心に90度回転します。このとき石は薄くなり、見えなくなります。色はまだ黒いです。 */
+    50.1% { background: radial-gradient(circle at 30% 30%, #fff, #ccc); } /* 50%とほぼ同時に、背景色を白に切り替えます。石が完全に横を向いて見えない瞬間に色が変わります。 */
+    100% { transform: rotateY(180deg); background: radial-gradient(circle at 30% 30%, #fff, #ccc); } /* アニメーション終了時（100%）は、Y軸を中心に180度回転し、白い石の状態になります。 */
+}
+@keyframes flipToBlack {
+    /* `flipToBlack`という名前のアニメーションの定義です。（白から黒へ反転） */
+    0% { transform: rotateY(0deg); background: radial-gradient(circle at 30% 30%, #fff, #ccc); } /* アニメーション開始時（0%）は、回転なし（0度）で白い石の状態です。 */
+    50% { transform: rotateY(90deg); background: radial-gradient(circle at 30% 30%, #fff, #ccc); } /* アニメーション中間点（50%）では、Y軸を中心に90度回転します。色はまだ白です。 */
+    50.1% { background: radial-gradient(circle at 30% 30%, #555, #000); } /* 50%とほぼ同時に、背景色を黒に切り替えます。 */
+    100% { transform: rotateY(180deg); background: radial-gradient(circle at 30% 30%, #555, #000); } /* アニメーション終了時（100%）は、Y軸を中心に180度回転し、黒い石の状態になります。 */
+}
+
+
+.game-message {
+    /* ゲーム中に表示されるメッセージ（「パスです」や「ゲーム終了」など）のスタイル設定です。 */
+    margin-top: 15px; /* 要素の上に15ピクセルの余白を設けます。 */
+    font-size: 1.1em; /* 文字の大きさを親要素の約1.1倍に設定します。 */
+    font-weight: bold; /* 文字を太字に設定します。 */
+    color: #fff; /* 文字の色を白色に設定します。 */
+    min-height: 1.5em; /* 最小の高さを文字の約1.5倍に設定します。これにより、メッセージがない時でもレイアウトの変動を抑えます。 */
+    text-align: center; /* テキストを中央揃えにします。 */
+    width: 100%; /* 幅を親要素の100%に設定します。 */
+    background-color: rgba(0,0,0,0.2); /* 背景色を、透明度20%の黒色に設定します。背景が少し暗くなります。 */
+    padding: 5px; /* 内側の余白を5ピクセルに設定します。 */
+    border-radius: 5px; /* 角を5ピクセル丸くします。 */
+}
+
+.creator-info {
+    /* 作成者情報のスタイル設定です。 */
+    font-size: 1em; /* 文字の大きさを親要素と同じサイズに設定します。 */
+    color: #333333; /* 文字の色を濃い灰色（#333333）に設定します。例として、`black`も選択肢として示唆されています。 */
+    margin-top: 25px; /* 要素の上に25ピクセルの余白を設けます。 */
+    text-align: center; /* テキストを中央揃えにします。 */
+    font-weight: bold; /* 文字を太字に設定します。 */
+}

@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>AIと対戦！オセロゲーム</title> <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* bodyはウェブページ全体のスタイルを決めます。 */
+        body {
+            font-family: 'Roboto', 'M PLUS Rounded 1c', sans-serif; /* 使うフォントの種類を設定します。 */
+            display: flex; /* 要素を横並びにするための設定（Flexbox）です。 */
+            flex-direction: column; /* 要素を縦方向に並べます。 */
+            align-items: center; /* 中央揃えにします。 */
+            justify-content: center; /* 垂直方向も中央揃えにします。 */
+            min-height: 100vh; /* 画面の高さ全体を使うようにします。 */
+            margin: 0; /* 余白をなくします。 */
+            background: linear-gradient(to bottom right, #6DD5FA, #2980B9); /* 背景色をグラデーションにします。 */
+            color: #333; /* 文字の色を濃い灰色にします。 */
+            padding: 10px; /* 内側の余白を設定します。 */
+            box-sizing: border-box; /* パディングやボーダーを含めて要素のサイズを計算します。 */
+            overflow-x: hidden; /* 横方向のスクロールバーを表示しないようにします。 */
+        }
+
+        /* #title-screen はゲーム開始前の画面のスタイルです。 */
+        #title-screen {
+            display: flex; /* Flexboxを使います。 */
+            flex-direction: column; /* 要素を縦に並べます。 */
+            align-items: center; /* 中央揃えにします。 */
+            padding: 30px 40px; /* 内側の上下左右の余白です。 */
+            background-color: rgba(255, 255, 255, 0.95); /* 半透明の白い背景色です。 */
+            border-radius: 15px; /* 角を丸くします。 */
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15); /* 影をつけます。 */
+            text-align: center; /* 文字を中央揃えにします。 */
+            width: 90%; /* 幅を親要素の90%にします。 */
+            max-width: 500px; /* 最大幅を設定します。 */
+        }
+
+        /* タイトル画面のh1（見出し）のスタイルです。 */
+        #title-screen h1 {
+            font-family: 'M PLUS Rounded 1c', sans-serif; /* 専用のフォントを設定します。 */
+            font-size: 2.8em; /* 文字の大きさを設定します。 */
+            font-weight: 700; /* 文字を太くします。 */
+            color: #1A237E; /* 濃い青色にします。 */
+            margin-bottom: 25px; /* 下に余白を作ります。 */
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1); /* 文字に影をつけます。 */
+        }
+
+        /* 盤面サイズとAIの強さの選択部分の見出しのスタイルです。 */
+        #board-size-selection h2, #difficulty-selection h2 {
+            font-size: 1.2em; /* 文字の大きさを設定します。 */
+            margin-bottom: 12px; /* 下に余白を作ります。 */
+            color: #333; /* 文字の色を濃い灰色にします。 */
+            font-weight: 700; /* 文字を太くします。 */
+        }
+
+        /* 盤面サイズ選択のdiv（領域）のスタイルです。 */
+        #board-size-selection div {
+            margin-bottom: 10px; /* 下に余白を作ります。 */
+            display: flex; /* Flexboxを使います。 */
+            justify-content: center; /* 中央揃えにします。 */
+            align-items: center; /* 垂直方向も中央揃えにします。 */
+            gap: 10px; /* 要素間の隙間を設定します。 */
+        }
+
+        /* 盤面サイズ選択のラベルのスタイルです。 */
+        #board-size-selection label {
+            font-size: 1em; /* 文字の大きさを設定します。 */
+        }
+
+        /* 盤面サイズの数値入力欄のスタイルです。 */
+        #board-size-selection input[type="number"] {
+            width: 65px; /* 幅を設定します。 */
+            padding: 8px; /* 内側の余白です。 */
+            border: 1px solid #bbb; /* 枠線のスタイルです。 */
+            border-radius: 5px; /* 角を丸くします。 */
+            font-size: 1em; /* 文字の大きさを設定します。 */
+            text-align: center; /* 文字を中央揃えにします。 */
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); /* 内側に影をつけます。 */
+        }
+
+        /* 難易度ボタン、ゲームスタートボタン、ゲーム操作ボタン共通のスタイルです。 */
+        .difficulty-button, #start-game-button, .game-control-button {
+            padding: 10px 20px; /* 内側の上下、左右の余白です。 */
+            margin: 5px; /* 外側の余白です。 */
+            font-size: 1em; /* 文字の大きさを設定します。 */
+            font-weight: bold; /* 文字を太くします。 */
+            border: none; /* 枠線をなくします。 */
+            background-color: #3498db; /* ボタンの背景色を青にします。 */
+            color: white; /* 文字の色を白にします。 */
+            border-radius: 8px; /* 角を丸くします。 */
+            cursor: pointer; /* マウスカーソルを指の形にします。 */
+            transition: all 0.2s ease-out; /* マウスオーバー時のアニメーションを滑らかにします。 */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15); /* 影をつけます。 */
+        }
+
+        /* ボタンにマウスが乗ったときのスタイルです。 */
+        .difficulty-button:hover, #start-game-button:hover, .game-control-button:hover {
+            transform: translateY(-2px); /* 少し上に動かします。 */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2); /* 影を濃くします。 */
+        }
+
+        /* 選択された難易度ボタンのスタイルです。 */
+        .difficulty-button.selected {
+            background-color: #1A237E; /* 背景色を濃い青にします。 */
+            color: #fff; /* 文字の色を白にします。 */
+            border-color: #1A237E; /* 枠線の色を濃い青にします。 */
+            transform: translateY(0); /* 位置を元に戻します。 */
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); /* 内側に影をつけます。 */
+        }
+
+        /* ゲームスタートボタンのスタイルです。 */
+        #start-game-button {
+            background-color: #2ecc71; /* 背景色を緑にします。 */
+            padding: 12px 35px; /* 内側の上下、左右の余白です。 */
+            font-size: 1.2em; /* 文字を大きくします。 */
+            margin-top: 20px; /* 上に余白を作ります。 */
+        }
+
+        /* ゲームスタートボタンにマウスが乗ったときのスタイルです。 */
+        #start-game-button:hover { 
+            background-color: #27ae60; /* 背景色を少し濃い緑にします。 */
+        }
+
+        /* エラーメッセージのスタイルです。 */
+        .error-message {
+            color: #e74c3c; /* 文字の色を赤にします。 */
+            font-size: 0.9em; /* 文字を少し小さくします。 */
+            margin-top: 10px; /* 上に余白を作ります。 */
+            min-height: 1.2em; /* 最小の高さを設定します。 */
+        }
+
+        /* #game-screen はゲーム中の画面のスタイルです。 */
+        #game-screen {
+            display: none; /* 初期状態では非表示にします。 */
+            flex-direction: column; /* 要素を縦に並べます。 */
+            align-items: center; /* 中央揃えにします。 */
+            width: 100%; /* 幅を100%にします。 */
+            max-width: 95vw; /* 最大幅をビューポートの95%にします。 */
+            padding: 15px; /* 内側の余白です。 */
+            box-sizing: border-box; /* パディングやボーダーを含めて要素のサイズを計算します。 */
+        }
+
+        /* ゲーム操作ボタン（トップ）のスタイルです。 */
+        #game-controls-top {
+            display: flex; /* Flexboxを使います。 */
+            justify-content: space-around; /* 要素を均等に配置します。 */
+            align-items: center; /* 垂直方向も中央揃えにします。 */
+            width: 100%; /* 幅を100%にします。 */
+            max-width: 550px; /* 最大幅を設定します。 */
+            margin-bottom: 15px; /* 下に余白を作ります。 */
+        }
+
+        /* ゲーム操作ボタンのスタイルです。 */
+        .game-control-button {
+            font-size: 0.9em; /* 文字を少し小さくします。 */
+            padding: 8px 15px; /* 内側の上下、左右の余白です。 */
+        }
+
+        /* タイトルへ戻るボタンのスタイルです。 */
+        #back-to-title-button { 
+            background-color: #e74c3c; /* 背景色を赤にします。 */
+        }
+
+        /* ミュートボタンのスタイルです。 */
+        #mute-button { 
+            background-color: #f39c12; /* 背景色をオレンジにします。 */
+        }
+
+        /* リセットボタンのスタイルです。 */
+        #reset-button { 
+            background-color: #9b59b6; /* 背景色を紫にします。 */
+        }
+
+        /* ヒントボタンのスタイルです。 */
+        #hint-button {
+            background-color: #17a2b8; /* 背景色を水色にします。 */
+        }
+
+        /* ミュート状態のミュートボタンのスタイルです。 */
+        #mute-button.muted { 
+            background-color: #7f8c8d; /* 背景色を灰色にします。 */
+        }
+
+        /* 現在のゲーム情報表示部分のスタイルです。 */
+        #current-game-info-display {
+            font-size: 1.1em; /* 文字を少し大きくします。 */
+            color: #fff; /* 文字の色を白にします。 */
+            font-weight: bold; /* 文字を太くします。 */
+            text-align: center; /* 文字を中央揃えにします。 */
+            margin-bottom: 10px; /* 下に余白を作ります。 */
+            padding: 8px; /* 内側の余白です。 */
+            background-color: rgba(0,0,0,0.3); /* 半透明の黒い背景色です。 */
+            border-radius: 5px; /* 角を丸くします。 */
+            width: 100%; /* 幅を100%にします。 */
+            max-width: 500px; /* 最大幅を設定します。 */
+        }
+
+        /* ゲーム情報表示部分のスタイルです。 */
+        #game-info {
+            margin-bottom: 10px; /* 下に余白を作ります。 */
+            padding: 12px; /* 内側の余白です。 */
+            background-color: rgba(255, 255, 255, 0.9); /* 半透明の白い背景色です。 */
+            border-radius: 8px; /* 角を丸くします。 */
+            text-align: center; /* 文字を中央揃えにします。 */
+            width: 100%; /* 幅を100%にします。 */
+            max-width: 450px; /* 最大幅を設定します。 */
+            box-sizing: border-box; /* パディングやボーダーを含めて要素のサイズを計算します。 */
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1); /* 影をつけます。 */
+        }
+
+        /* ゲーム情報表示部分のp要素のスタイルです。 */
+        #game-info p { 
+            margin: 6px 0; /* 上下の余白を設定します。 */
+            font-size: 1em; /* 文字の大きさを設定します。 */
+        }
+
+        /* 現在のターン表示部分のスタイルです。 */
+        #current-turn-indicator { 
+            font-weight: bold; /* 文字を太くします。 */
+            color: #1A237E; /* 濃い青色にします。 */
+            margin-top: 8px; /* 上に余白を作ります。 */
+            font-size: 1.1em; /* 文字を少し大きくします。 */
+        }
+
+        /* オセロ盤の容器のスタイルです。 */
+        #board-container-wrapper {
+            width: 100%; /* 幅を100%にします。 */
+            max-width: 500px; /* 最大幅を設定します。 */
+            margin: 10px auto; /* 上下に10px、左右は自動で中央揃えにします。 */
+            padding: 10px; /* 内側の余白です。 */
+            background-color: #004d00; /* 背景色を濃い緑にします。 */
+            border-radius: 10px; /* 角を丸くします。 */
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3); /* 影をつけます。 */
+            position: relative; /* 内部の要素の基準位置になります。 */
+        }
+
+        /* オセロ盤本体のスタイルです。 */
+        #board-container {
+            display: grid; /* グリッド表示にします。（マス目を格子状に並べる） */
+            border: 2px solid #111; /* 枠線を設定します。 */
+            width: 100%; /* 幅を100%にします。 */
+            aspect-ratio: 1 / 1; /* アスペクト比を1:1（正方形）にします。 */
+            background-color: #006400; /* 背景色を緑にします。 */
+            position: relative; /* 内部の要素の基準位置になります。 */
+        }
+
+        /* 各マス目のスタイルです。 */
+        .cell {
+            border: 1px solid rgba(0,0,0,0.2); /* 枠線を半透明の黒にします。 */
+            display: flex; /* Flexboxを使います。 */
+            justify-content: center; /* 中央揃えにします。 */
+            align-items: center; /* 垂直方向も中央揃えにします。 */
+            cursor: pointer; /* マウスカーソルを指の形にします。 */
+            box-sizing: border-box; /* パディングやボーダーを含めて要素のサイズを計算します。 */
+            transition: background-color 0.2s; /* 背景色変化を滑らかにします。 */
+            position: relative; /* 内部の要素の基準位置になります。 */
+        }
+
+        /* 置けるマス目に表示されるヒントのスタイルです。（::beforeは疑似要素） */
+        .cell.playable::before {
+            content: ''; /* 空のコンテンツを設定します。 */
+            position: absolute; /* 親要素のマス目内での絶対位置を設定します。 */
+            width: 60%; /* 幅をマス目の60%にします。 */
+            height: 60%; /* 高さをマス目の60%にします。 */
+            border-radius: 50%; /* 円形にします。 */
+            background-color: rgba(255, 255, 255, 0.2); /* 半透明の白い背景色にします。 */
+            pointer-events: none; /* マウスイベントを透過させます。 */
+            animation: pulse 1.5s infinite ease-in-out; /* pulseアニメーションを無限に繰り返します。 */
+            display: none; /* 初期状態では非表示にします。 */
+        }
+
+        /* ヒントが表示されている場合のスタイルです。 */
+        .cell.playable.show-hints::before {
+            display: block; /* 表示します。 */
+        }
+
+        /* 置けるマス目にマウスが乗ったときのヒントのスタイルです。 */
+        .cell.playable:hover::before {
+            background-color: rgba(255, 255, 255, 0.3); /* 背景色を少し濃くします。 */
+            display: block; /* 表示します。 */
+        }
+
+        /* ヒントの脈動アニメーションです。 */
+        @keyframes pulse {
+            0% { transform: scale(0.9); opacity: 0.7; } /* 開始時は少し小さく、透明度を下げます。 */
+            50% { transform: scale(1); opacity: 1; } /* 中間では通常のサイズ、不透明にします。 */
+            100% { transform: scale(0.9); opacity: 0.7; } /* 終了時は開始時と同じに戻ります。 */
+        }
+
+        /* オセロの石（ディスク）のスタイルです。 */
+        .disc {
+            width: 82%; /* 幅をマス目の82%にします。 */
+            height: 82%; /* 高さをマス目の82%にします。 */
+            border-radius: 50%; /* 円形にします。 */
+            box-shadow: inset 0 -2px 3px rgba(0,0,0,0.3), /* 内側に影をつけます。 */
+                        0 2px 3px rgba(0,0,0,0.3); /* 外側に影をつけます。 */
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.3s ease-out; /* 変形と背景色の変化を滑らかにします。 */
+            transform-style: preserve-3d; /* 3D変形を有効にします。 */
+        }
+
+        /* 黒い石のスタイルです。 */
+        .disc.black {
+            background: radial-gradient(circle at 30% 30%, #555, #000); /* 黒色のグラデーションです。 */
+        }
+
+        /* 白い石のスタイルです。 */
+        .disc.white {
+            background: radial-gradient(circle at 30% 30%, #fff, #ccc); /* 白色（灰色）のグラデーションです。 */
+        }
+
+        /* 白にひっくり返るアニメーションのスタイルです。 */
+        .disc.flipping-to-white {
+            animation: flipToWhite 0.5s forwards; /* flipToWhiteアニメーションを0.5秒で実行し、終了時の状態を保持します。 */
+        }
+
+        /* 黒にひっくり返るアニメーションのスタイルです。 */
+        .disc.flipping-to-black {
+            animation: flipToBlack 0.5s forwards; /* flipToBlackアニメーションを0.5秒で実行し、終了時の状態を保持します。 */
+        }
+
+        /* 白にひっくり返るアニメーションのキーフレームです。 */
+        @keyframes flipToWhite {
+            0% { transform: rotateY(0deg); background: radial-gradient(circle at 30% 30%, #555, #000); } /* 開始時は黒い石の状態です。 */
+            50% { transform: rotateY(90deg); background: radial-gradient(circle at 30% 30%, #555, #000); } /* 半分ひっくり返った状態（見えない）です。 */
+            50.1% { background: radial-gradient(circle at 30% 30%, #fff, #ccc); } /* 色を白に切り替えます。 */
+            100% { transform: rotateY(180deg); background: radial-gradient(circle at 30% 30%, #fff, #ccc); } /* 白い石になってひっくり返ります。 */
+        }
+
+        /* 黒にひっくり返るアニメーションのキーフレームです。 */
+        @keyframes flipToBlack {
+            0% { transform: rotateY(0deg); background: radial-gradient(circle at 30% 30%, #fff, #ccc); } /* 開始時は白い石の状態です。 */
+            50% { transform: rotateY(90deg); background: radial-gradient(circle at 30% 30%, #fff, #ccc); } /* 半分ひっくり返った状態です。 */
+            50.1% { background: radial-gradient(circle at 30% 30%, #555, #000); } /* 色を黒に切り替えます。 */
+            100% { transform: rotateY(180deg); background: radial-gradient(circle at 30% 30%, #555, #000); } /* 黒い石になってひっくり返ります。 */
+        }
+
+        /* ゲームメッセージのスタイルです。 */
+        .game-message {
+            margin-top: 15px; /* 上に余白を作ります。 */
+            font-size: 1.1em; /* 文字を少し大きくします。 */
+            font-weight: bold; /* 文字を太くします。 */
+            color: #fff; /* 文字の色を白にします。 */
+            min-height: 1.5em; /* 最小の高さを設定します。 */
+            text-align: center; /* 文字を中央揃えにします。 */
+            width: 100%; /* 幅を100%にします。 */
+            background-color: rgba(0,0,0,0.2); /* 半透明の黒い背景色です。 */
+            padding: 5px; /* 内側の余白です。 */
+            border-radius: 5px; /* 角を丸くします。 */
+        }
+
+        /* 作成者情報のスタイルです。 */
+        .creator-info {
+            font-size: 1em; /* 文字の大きさを設定します。 */
+            color: #333333; /* 文字の色を濃い灰色にします。 */
+            margin-top: 25px; /* 上に余白を作ります。 */
+            text-align: center; /* 文字を中央揃えにします。 */
+            font-weight: bold; /* 文字を太くします。 */
+        }
+    </style>
+</head>
+<body>
+    <div id="title-screen">
+        <h1>AIと対戦！オセロゲーム</h1>
+        <div id="board-size-selection">
+            <h2>盤面サイズ</h2>
+            <div>
+                <label for="board-size-input">サイズ (6-16):</label>
+                <input type="number" id="board-size-input" value="8" min="6" max="16" step="2">
+            </div>
+        </div>
+        <div id="difficulty-selection">
+            <h2>AIの強さ</h2>
+            <button class="difficulty-button" data-difficulty="easy">易しい</button>
+            <button class="difficulty-button selected" data-difficulty="normal">普通</button> <button class="difficulty-button" data-difficulty="hard">難しい</button>
+        </div>
+        <button id="start-game-button">ゲームスタート</button> <p id="size-error-message" class="error-message"></p> <div class="creator-info" id="creator-title-screen">
+            香川高専詫間キャンパス 情報工学科 木村友郁
+        </div>
+    </div>
+
+    <div id="game-screen" style="display: none;">
+        <div id="game-controls-top">
+            <button id="back-to-title-button" class="game-control-button">タイトルへ</button> <button id="mute-button" class="game-control-button">ミュート</button> <button id="hint-button" class="game-control-button">ヒント ON</button> <button id="reset-button" class="game-control-button">リセット</button> </div>
+        <h2 id="current-game-info-display"></h2> <div id="game-info">
+            <p>あなた (黒): <span id="black-score">2</span></p>
+            <p>AI (白): <span id="white-score">2</span></p>
+            <p id="current-turn-indicator">あなたの番です</p> </div>
+        <div id="board-container-wrapper">
+            <div id="board-container">
+            </div> </div>
+        <p id="message" class="game-message"></p> </div>
+
+    <script>
+        // ウェブページが完全に読み込まれたら、{}の中のコードが実行されます。
+        document.addEventListener('DOMContentLoaded', () => {
+            // DOM Elements（ウェブページの各要素をJavaScriptで操作するために取得します）
+            const titleScreen = document.getElementById('title-screen'); // タイトル画面の要素
+            const gameScreen = document.getElementById('game-screen'); // ゲーム画面の要素
+            const boardSizeInput = document.getElementById('board-size-input'); // 盤面サイズ入力欄の要素
+            const sizeErrorMessage = document.getElementById('size-error-message'); // サイズエラーメッセージの要素
+            const difficultyButtons = document.querySelectorAll('.difficulty-button'); // 難易度ボタンをすべて取得
+            const startGameButton = document.getElementById('start-game-button'); // ゲームスタートボタンの要素
+            const backToTitleButton = document.getElementById('back-to-title-button'); // タイトルへ戻るボタンの要素
+            const muteButton = document.getElementById('mute-button'); // ミュートボタンの要素
+            const hintButton = document.getElementById('hint-button'); // ヒントボタンの要素
+            const currentGameInfoDisplay = document.getElementById('current-game-info-display'); // 現在のゲーム情報表示の要素
+            const boardContainer = document.getElementById('board-container'); // オセロ盤の要素
+            const blackScoreSpan = document.getElementById('black-score'); // 黒石のスコア表示要素
+            const whiteScoreSpan = document.getElementById('white-score'); // 白石のスコア表示要素
+            const currentTurnIndicator = document.getElementById('current-turn-indicator'); // 現在のターン表示要素
+            const resetButton = document.getElementById('reset-button'); // リセットボタンの要素
+            const messageElement = document.getElementById('message'); // ゲームメッセージ表示要素
+
+            // Game Constants & Variables（ゲームの定数と変数です）
+            const PLAYER = 1; // プレイヤー（黒石）を表す数値
+            const AI = 2; // AI（白石）を表す数値
+            const EMPTY = 0; // 石が置かれていないマスを表す数値
+            let boardSize = 8; // 盤面のサイズ（初期値は8x8）
+            let board = []; // オセロ盤の状態を保持する2次元配列
+            let currentPlayer = PLAYER; // 現在のプレイヤー（初期はプレイヤーの番）
+            let gameRunning = true; // ゲームが進行中かどうかを示すフラグ
+            let selectedDifficulty = 'normal'; // 選択されたAIの難易度（初期は'normal'）
+            let isMuted = false; // ミュート状態かどうかを示すフラグ
+            let showHints = false; // ヒントが表示されているかどうかを示すフラグ
+
+            // オセロの石をひっくり返す方向を定義します（上、下、左、右、斜め4方向）
+            const directions = [
+                [-1, -1], [-1, 0], [-1, 1],
+                [0, -1],           [0, 1],
+                [1, -1], [1, 0], [1, 1]
+            ];
+
+            // Sound Effects（効果音の設定と再生関数）
+            // createSound関数：指定した周波数、長さ、波形で音を生成する関数です。
+            function createSound(frequency, duration, type = 'sine') {
+                return {
+                    currentTime: 0, // 現在の時間（未使用）
+                    play: () => {
+                        if (isMuted) return Promise.resolve(); // ミュート状態なら音を鳴らさない
+
+                        try {
+                            // AudioContextを使って音を生成します。
+                            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                            const oscillator = audioContext.createOscillator(); // 音源（発振器）
+                            const gainNode = audioContext.createGain(); // 音量調整
+
+                            oscillator.connect(gainNode); // 音源を音量調整に接続
+                            gainNode.connect(audioContext.destination); // 音量調整をスピーカー（出力先）に接続
+
+                            oscillator.type = type; // 音の波形（sine, squareなど）
+                            oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime); // 周波数（音の高さ）
+
+                            gainNode.gain.setValueAtTime(0, audioContext.currentTime); // 最初は音量ゼロ
+                            gainNode.gain.linearRampToValueAtTime(0.1, audioContext.currentTime + 0.01); // 0.01秒で音量を上げる
+                            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration); // 指定時間で音量を徐々に下げる
+
+                            oscillator.start(audioContext.currentTime); // 音を鳴らし始める
+                            oscillator.stop(audioContext.currentTime + duration); // 指定時間後に音を止める
+
+                            return Promise.resolve(); // 成功したPromiseを返す
+                        } catch (error) {
+                            console.error("Error creating sound:", error); // エラーがあればコンソールに表示
+                            return Promise.resolve(); // エラーがあっても処理を続行
+                        }
+                    }
+                };
+            }
+
+            // playSound関数：指定した名前の効果音を再生します。
+            const sounds = {
+                place: createSound(800, 0.1, 'square'), // 石を置く音
+                flip: createSound(600, 0.15, 'sine'), // 石がひっくり返る音
+                pass: createSound(400, 0.2, 'triangle'), // パスする音
+                win: createSound(1000, 0.3, 'sine'), // 勝ちの音
+                lose: createSound(300, 0.4, 'sawtooth'), // 負けの音
+                draw: createSound(500, 0.3, 'sine'), // 引き分けの音
+                click: createSound(1200, 0.05, 'square') // ボタンクリック音
+            };
+
+            function playSound(soundName) {
+                if (!isMuted && sounds[soundName]) { // ミュートでなく、その効果音が存在すれば
+                    sounds[soundName].currentTime = 0; // 音の再生位置を最初に戻す（連続再生用）
+                    sounds[soundName].play().catch(error => console.error("Error playing sound:", soundName, error)); // 音を再生し、エラーがあれば表示
+                }
+            }
+
+            // サイズ入力欄の変更イベントリスナー：入力された値が有効かチェックします。
+            boardSizeInput.addEventListener('input', () => {
+                const value = parseInt(boardSizeInput.value); // 入力値を整数に変換
+                // 6以上16以下で偶数であればエラーメッセージを消します。
+                if (value >= 6 && value <= 16 && value % 2 === 0) {
+                    sizeErrorMessage.textContent = "";
+                }
+            });
+
+            // Title Screen Logic（タイトル画面の操作ロジック）
+            // 難易度ボタンがクリックされたときの処理です。
+            difficultyButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    playSound('click'); // クリック音を鳴らす
+                    // 他のすべての難易度ボタンから'selected'クラスを削除し、選択されたボタンに'selected'クラスを追加します。
+                    difficultyButtons.forEach(btn => btn.classList.remove('selected'));
+                    button.classList.add('selected');
+                    selectedDifficulty = button.dataset.difficulty; // 選択された難易度を保存します。
+                });
+            });
+
+            // ゲームスタートボタンがクリックされたときの処理です。
+            startGameButton.addEventListener('click', () => {
+                playSound('click'); // クリック音を鳴らす
+                const size = parseInt(boardSizeInput.value); // 盤面サイズを取得
+
+                // サイズのバリデーション（入力値のチェック）
+                if (size % 2 !== 0 || size < 6 || size > 16) {
+                    sizeErrorMessage.textContent = "サイズは6～16の偶数を指定してください。"; // エラーメッセージを表示
+                    return; // 処理を中断
+                }
+                sizeErrorMessage.textContent = ""; // エラーメッセージをクリア
+                boardSize = size; // 選択された盤面サイズをゲーム変数に設定
+
+                // 画面の切り替え
+                titleScreen.style.display = 'none'; // タイトル画面を非表示に
+                gameScreen.style.display = 'flex'; // ゲーム画面を表示に
+
+                // ゲーム情報表示を更新
+                let difficultyText = "";
+                if (selectedDifficulty === "easy") difficultyText = "易しい";
+                else if (selectedDifficulty === "normal") difficultyText = "普通";
+                else if (selectedDifficulty === "hard") difficultyText = "難しい";
+                currentGameInfoDisplay.textContent = `盤面: ${boardSize}x${boardSize}, 難易度: ${difficultyText}`;
+
+                initializeBoard(); // オセロ盤を初期化します。
+            });
+
+            // タイトルへ戻るボタンがクリックされたときの処理です。
+            backToTitleButton.addEventListener('click', () => {
+                playSound('click'); // クリック音を鳴らす
+                gameScreen.style.display = 'none'; // ゲーム画面を非表示に
+                titleScreen.style.display = 'flex'; // タイトル画面を表示に
+            });
+
+            // ミュートボタンがクリックされたときの処理です。
+            muteButton.addEventListener('click', () => {
+                isMuted = !isMuted; // ミュート状態を切り替えます。
+                muteButton.textContent = isMuted ? "ミュート解除" : "ミュート"; // ボタンの表示テキストを切り替えます。
+                muteButton.classList.toggle('muted', isMuted); // 'muted'クラスを追加/削除してスタイルを切り替えます。
+            });
+
+            // ヒントボタンがクリックされたときの処理です。
+            hintButton.addEventListener('click', () => {
+                playSound('click'); // クリック音を鳴らす
+                showHints = !showHints; // ヒント表示状態を切り替えます。
+                hintButton.textContent = showHints ? "ヒント OFF" : "ヒント ON"; // ボタンの表示テキストを切り替えます。
+                hintButton.style.backgroundColor = showHints ? "#28a745" : "#17a2b8"; // ボタンの背景色を切り替えます。
+                renderBoard(); // 盤面を再描画してヒントの表示/非表示を反映させます。
+            });
+
+            // Game Logic Functions（ゲームの主要なロジック関数）
+
+            // initializeBoard関数：ゲーム盤を初期状態に戻します。
+            function initializeBoard() {
+                // 盤面をEMPTY（0）で埋めます。
+                board = Array(boardSize).fill(null).map(() => Array(boardSize).fill(EMPTY));
+                // 中央に初期の石を配置します。（オセロの初期配置）
+                const midX1 = boardSize / 2 - 1, midX2 = boardSize / 2;
+                const midY1 = boardSize / 2 - 1, midY2 = boardSize / 2;
+                board[midY1][midX1] = AI; // 左上白
+                board[midY1][midX2] = PLAYER; // 右上黒
+                board[midY2][midX1] = PLAYER; // 左下黒
+                board[midY2][midX2] = AI; // 右下白
+
+                currentPlayer = PLAYER; // 最初のターンはプレイヤー（黒）
+                gameRunning = true; // ゲームを進行中に設定
+                showHints = false; // ヒント表示をOFFに
+                hintButton.textContent = "ヒント ON"; // ヒントボタンのテキストを「ヒント ON」に
+                hintButton.style.backgroundColor = "#17a2b8"; // ヒントボタンの背景色を初期色に
+                messageElement.textContent = ''; // メッセージをクリア
+
+                // CSS Gridのテンプレート（列と行の数）を設定
+                boardContainer.style.gridTemplateColumns = `repeat(${boardSize}, 1fr)`;
+                boardContainer.style.gridTemplateRows = `repeat(${boardSize}, 1fr)`;
+                renderBoard(); // 盤面を描画します。
+                updateScoreAndTurn(); // スコアと現在のターンを更新します。
+            }
+
+            // renderBoard関数：現在のboardの状態に基づいてHTMLの盤面を更新します。
+            function renderBoard() {
+                boardContainer.innerHTML = ''; // 既存のマス目をすべて削除します。
+                // プレイヤーの置ける場所を計算します。（ヒント表示用）
+                const validMovesForPlayer = (currentPlayer === PLAYER && gameRunning) ? getAllValidMoves(PLAYER) : [];
+
+                // 盤面の各マスをループしてHTML要素を作成します。
+                for (let row = 0; row < boardSize; row++) {
+                    for (let col = 0; col < boardSize; col++) {
+                        const cell = document.createElement('div'); // div要素（マス目）を作成
+                        cell.classList.add('cell'); // 'cell'クラスを追加
+                        cell.dataset.row = row; // 行番号をデータ属性に保存
+                        cell.dataset.col = col; // 列番号をデータ属性に保存
+
+                        const discData = board[row][col]; // そのマスにある石の情報を取得
+                        if (discData !== EMPTY) { // 石があれば
+                            const disc = document.createElement('div'); // div要素（石）を作成
+                            disc.classList.add('disc'); // 'disc'クラスを追加
+                            // 石の色を設定（PLAYERなら黒、AIなら白）
+                            disc.classList.add(discData === PLAYER ? 'black' : 'white');
+                            if (disc.style.transform === '') { // アニメーション準備
+                                disc.style.transform = 'rotateY(0deg)';
+                            }
+                            cell.appendChild(disc); // マスに石を追加
+                        } else if (currentPlayer === PLAYER && gameRunning) { // 石がなく、プレイヤーのターンでゲーム進行中なら
+                            // プレイヤーが石を置ける場所であれば
+                            if (validMovesForPlayer.some(move => move.row === row && move.col === col)) {
+                                cell.classList.add('playable'); // 'playable'クラスを追加（置けるマスとしてマーク）
+                                if (showHints) { // ヒント表示がONなら
+                                    cell.classList.add('show-hints'); // 'show-hints'クラスを追加してヒントを表示
+                                }
+                            }
+                        }
+                        cell.addEventListener('click', handleCellClick); // マスがクリックされたときのイベントリスナーを設定
+                        boardContainer.appendChild(cell); // オセロ盤にマスを追加
+                    }
+                }
+            }
+
+            // handleCellClick関数：マス目がクリックされたときの処理です。
+            async function handleCellClick(event) {
+                if (!gameRunning || currentPlayer === AI) return; // ゲームが進行中でない、またはAIのターンなら何もしない
+
+                const targetCell = event.currentTarget; // クリックされたマス目要素
+                const row = parseInt(targetCell.dataset.row); // 行番号を取得
+                const col = parseInt(targetCell.dataset.col); // 列番号を取得
+
+                // そのマスに石を置いたときにひっくり返せる石のリストを取得します。
+                const flippableDiscs = getFlippableDiscs(row, col, PLAYER);
+                if (flippableDiscs.length > 0) { // ひっくり返せる石がある（つまり、有効な手である）場合
+                    playSound('place'); // 石を置く音を鳴らす
+
+                    board[row][col] = PLAYER; // 盤面にプレイヤーの石を置く（黒）
+
+                    // 新しい石のDOM要素を作成し、マスに追加
+                    targetCell.innerHTML = ''; // マスの中身を一度クリア
+                    const newDiscElement = document.createElement('div');
+                    newDiscElement.classList.add('disc', 'black'); // 黒石として設定
+                    newDiscElement.style.transform = 'rotateY(0deg)'; // アニメーション準備
+                    targetCell.appendChild(newDiscElement);
+                    targetCell.classList.remove('playable', 'show-hints'); // 置けるマス、ヒントのクラスを削除
+
+                    await animateFlips(flippableDiscs, PLAYER); // ひっくり返すアニメーションを実行し、完了を待つ
+
+                    messageElement.textContent = ''; // メッセージをクリア
+                    renderBoard(); // 盤面を再描画します。（アニメーション後の最終状態を反映）
+                    updateScoreAndTurn(); // スコアとターンを更新します。
+
+                    if (gameRunning) { // ゲームがまだ進行中なら
+                        switchPlayer(); // プレイヤーを切り替えます。
+                    }
+                } else {
+                    messageElement.textContent = "そこには置けません。"; // 無効な手の場合、エラーメッセージを表示
+                }
+            }
+
+            // animateFlips関数：石がひっくり返るアニメーションを実行します。
+            async function animateFlips(discsToFlip, newPlayerOwner) {
+                let flipSoundPlayedThisTurn = false; // 今回のターンでひっくり返す音を鳴らしたかどうかのフラグ
+                for (const discCoord of discsToFlip) { // ひっくり返す石の座標を1つずつ処理
+                    // 該当するマス目と石のDOM要素を取得
+                    const cellElement = boardContainer.querySelector(`.cell[data-row='${discCoord.row}'][data-col='${discCoord.col}']`);
+                    const discElement = cellElement ? cellElement.querySelector('.disc') : null;
+
+                    if (discElement) { // 石の要素が存在すれば
+                        if (!flipSoundPlayedThisTurn && discsToFlip.length > 0) {
+                            playSound('flip'); // ひっくり返す音を鳴らす（複数ひっくり返っても1回だけ鳴らす）
+                            flipSoundPlayedThisTurn = true;
+                        }
+
+                        // アニメーション用のクラス名を設定
+                        const targetColorClass = newPlayerOwner === PLAYER ? 'black' : 'white'; // 最終的な石の色
+                        const animationClass = newPlayerOwner === PLAYER ? 'flipping-to-black' : 'flipping-to-white'; // 実行するアニメーションのクラス
+
+                        discElement.style.transform = 'rotateY(0deg)'; // アニメーションをリセット
+                        // 既存の色とアニメーションクラスを削除
+                        discElement.classList.remove('white', 'black', 'flipping-to-white', 'flipping-to-black');
+                        // アニメーションのために一時的に逆の色を設定（アニメーションの最初の半分で表示される色）
+                        discElement.classList.add(newPlayerOwner === PLAYER ? 'white' : 'black');
+
+                        void discElement.offsetWidth; // 強制的にリフロー（再描画）を発生させ、アニメーションが最初から適用されるようにする
+                        discElement.classList.add(animationClass); // アニメーションクラスを追加してアニメーションを開始
+
+                        await new Promise(resolve => setTimeout(resolve, 500)); // アニメーションが完了するまで0.5秒待つ
+
+                        // アニメーション完了後、アニメーションクラスと一時的な色を削除し、最終的な色を設定
+                        discElement.classList.remove(animationClass);
+                        discElement.classList.remove('white', 'black');
+                        discElement.classList.add(targetColorClass);
+                        discElement.style.transform = 'rotateY(0deg)'; // 変形をリセット
+
+                        board[discCoord.row][discCoord.col] = newPlayerOwner; // 盤面上の石の色も更新
+                    }
+                }
+            }
+
+            // getFlippableDiscs関数：指定された位置に石を置いたときにひっくり返せる石のリストを返します。
+            function getFlippableDiscs(row, col, player) {
+                if (board[row][col] !== EMPTY) return []; // すでに石がある場所には置けない
+                const opponent = player === PLAYER ? AI : PLAYER; // 相手の石の色
+                let allFlippable = []; // ひっくり返せる石を格納するリスト
+
+                for (const [dr, dc] of directions) { // 8方向すべてをチェック
+                    let r = row + dr, c = col + dc; // 1マス先の座標
+                    let line = []; // この方向でひっくり返せる石のリスト
+
+                    // 盤面内で、相手の石が連続している間ループ
+                    while (r >= 0 && r < boardSize && c >= 0 && c < boardSize && board[r][c] === opponent) {
+                        line.push({row: r, col: c}); // ひっくり返せる石として追加
+                        r += dr; c += dc; // さらに1マス先へ
+                    }
+                    // 連続した相手の石の先に自分の石があれば、その間の石はひっくり返せる
+                    if (r >= 0 && r < boardSize && c >= 0 && c < boardSize && board[r][c] === player && line.length > 0) {
+                        allFlippable = allFlippable.concat(line); // ひっくり返せる石のリストに追加
+                    }
+                }
+                return allFlippable; // ひっくり返せるすべての石のリストを返す
+            }
+
+            // getAllValidMoves関数：指定されたプレイヤーが石を置けるすべての有効な手を返します。
+            function getAllValidMoves(player) {
+                const validMoves = []; // 有効な手を格納するリスト
+                for (let r = 0; r < boardSize; r++) {
+                    for (let c = 0; c < boardSize; c++) {
+                        if (board[r][c] === EMPTY) { // そのマスに石が置かれていなければ
+                            const flippable = getFlippableDiscs(r, c, player); // そのマスに置いたときにひっくり返せる石のリストを取得
+                            if (flippable.length > 0) { // ひっくり返せる石があれば、そこは有効な手
+                                validMoves.push({ row: r, col: c, count: flippable.length }); // 行、列、ひっくり返せる石の数を保存
+                            }
+                        }
+                    }
+                }
+                return validMoves; // 有効なすべての手を返す
+            }
+
+            // switchPlayer関数：現在のプレイヤーを切り替え、次のターンの処理を行います。
+            function switchPlayer() {
+                currentPlayer = (currentPlayer === PLAYER) ? AI : PLAYER; // プレイヤーを切り替える
+
+                if (!gameRunning) return; // ゲームが終了していたら何もしない
+
+                const validMovesCurrent = getAllValidMoves(currentPlayer); // 次のプレイヤー（切り替わった後）の有効な手を取得
+
+                if (validMovesCurrent.length === 0) { // 有効な手が一つもない場合（パス）
+                    playSound('pass'); // パス音を鳴らす
+                    messageElement.textContent = `${currentPlayer === PLAYER ? "あなた" : "AI"} はパスです。`; // パスしたことを表示
+
+                    currentPlayer = (currentPlayer === PLAYER) ? AI : PLAYER; // さらにプレイヤーを切り替える（もう一度相手の番にする）
+                    const validMovesOpponent = getAllValidMoves(currentPlayer); // 再び切り替わったプレイヤーの有効な手を取得
+
+                    if (validMovesOpponent.length === 0) { // 連続して両者パスの場合
+                        updateScoreAndTurn(); // スコアとターンを最終更新
+                        announceWinner(); // 勝敗を決定し発表
+                        return; // 処理を終了
+                    }
+                }
+
+                updateScoreAndTurn(); // スコアとターンを更新
+
+                if (currentPlayer === AI && gameRunning) { // AIのターンでゲームが進行中なら
+                    currentTurnIndicator.textContent = "AIが思考中です..."; // AIが考えていることを表示
+                    setTimeout(aiMove, Math.random() * 500 + 1200); // 1.2秒～1.7秒後にAIの処理を実行
+                } else if (gameRunning && currentPlayer === PLAYER) { // プレイヤーのターンでゲーム進行中なら
+                     renderBoard(); // 盤面を再描画（ヒント表示更新のため）
+                }
+            }
+
+            // aiMove関数：AIが次の手を決定し、実行します。
+            async function aiMove() {
+                if (!gameRunning) return; // ゲームが終了していたら何もしない
+
+                let bestMove = null; // AIが選ぶ最善の手
+                const validMoves = getAllValidMoves(AI); // AIの有効な手すべてを取得
+
+                if (validMoves.length === 0) { // AIが置けるマスがなければ
+                    if (gameRunning) switchPlayer(); // プレイヤーを切り替える（AIがパスする）
+                    return; // 処理を終了
+                }
+
+                if (selectedDifficulty === 'easy') { // 難易度が「易しい」の場合
+                    // ランダムに手を選択
+                    bestMove = validMoves[Math.floor(Math.random() * validMoves.length)];
+                } else { // 難易度が「普通」または「難しい」の場合
+                    if (selectedDifficulty === 'hard') { // 難易度が「難しい」の場合
+                        const corners = [ // 四隅の座標
+                            {r:0, c:0}, {r:0, c:boardSize-1},
+                            {r:boardSize-1, c:0}, {r:boardSize-1, c:boardSize-1}
+                        ];
+                        let cornerMove = null;
+                        // 四隅に置ける手があるかチェックし、あればそれを最善の手とする
+                        for (const corner of corners) {
+                            const moveAtCorner = validMoves.find(m => m.row === corner.r && m.col === corner.c);
+                            if (moveAtCorner) { cornerMove = moveAtCorner; break; }
+                        }
+                        if (cornerMove) bestMove = cornerMove; // 四隅に置けるならそれを選択
+                    }
+                    if (!bestMove) { // 四隅に置けない、または難易度が「普通」の場合
+                        // ひっくり返せる石の数が多い順にソートし、一番多い手を選択（greedy戦略）
+                        validMoves.sort((a, b) => b.count - a.count);
+                        bestMove = validMoves[0];
+                    }
+                }
+
+                if (bestMove) { // 最善の手が見つかった場合
+                    playSound('place'); // 石を置く音を鳴らす
+                    const flippableDiscs = getFlippableDiscs(bestMove.row, bestMove.col, AI); // ひっくり返せる石を取得
+
+                    board[bestMove.row][bestMove.col] = AI; // 盤面にAIの石を置く（白）
+
+                    // AIが置いた石のDOM要素を作成し、マスに追加
+                    const aiPlacedCell = boardContainer.querySelector(`.cell[data-row='${bestMove.row}'][data-col='${bestMove.col}']`);
+                    if (aiPlacedCell) {
+                        aiPlacedCell.innerHTML = '';
+                        const aiNewDiscElement = document.createElement('div');
+                        aiNewDiscElement.classList.add('disc', 'white'); // 白石として設定
+                        aiNewDiscElement.style.transform = 'rotateY(0deg)'; // アニメーション準備
+                        aiPlacedCell.appendChild(aiNewDiscElement);
+                    }
+
+                    await animateFlips(flippableDiscs, AI); // ひっくり返すアニメーションを実行し、完了を待つ
+
+                    messageElement.textContent = `AI が (${bestMove.row + 1}, ${bestMove.col + 1}) に置きました。`; // AIがどこに置いたか表示
+                    renderBoard(); // 盤面を再描画
+                    updateScoreAndTurn(); // スコアとターンを更新
+
+                    if (gameRunning) { // ゲームがまだ進行中なら
+                        switchPlayer(); // プレイヤーを切り替えます。
+                    }
+                }
+            }
+
+            // updateScoreAndTurn関数：現在の石の数を数え、スコアとターン表示を更新します。
+            function updateScoreAndTurn() {
+                let blackCount = 0, whiteCount = 0, emptyCount = 0; // 各石と空マスの数を初期化
+                for (let r = 0; r < boardSize; r++) {
+                    for (let c = 0; c < boardSize; c++) {
+                        if (board[r][c] === PLAYER) blackCount++; // 黒石の数をカウント
+                        else if (board[r][c] === AI) whiteCount++; // 白石の数をカウント
+                        else emptyCount++; // 空マスの数をカウント
+                    }
+                }
+                blackScoreSpan.textContent = blackCount; // 黒石スコアを更新
+                whiteScoreSpan.textContent = whiteCount; // 白石スコアを更新
+
+                if (!gameRunning) return; // ゲームが終了していたらターン表示は更新しない
+
+                // 現在のターン表示を更新
+                currentTurnIndicator.textContent = (currentPlayer === PLAYER) ? "あなたの番です" : "AIの番です";
+
+                // ゲーム終了条件のチェック
+                // 1. 全てのマスが埋まった場合
+                // 2. プレイヤーもAIもどちらも有効な手がなくなった場合
+                if (emptyCount === 0 || (!getAllValidMoves(PLAYER).length && !getAllValidMoves(AI).length)) {
+                    if (gameRunning) { // ゲームがまだ進行中なら（二重に呼ばれないように）
+                        setTimeout(announceWinner, 150); // 少し待ってから勝敗発表関数を呼び出す
+                    }
+                }
+            }
+
+            // announceWinner関数：ゲームの勝敗を判定し、結果を発表します。
+            function announceWinner() {
+                if (!gameRunning) return; // すでに勝敗が決定していたら何もしない
+                gameRunning = false; // ゲームを終了状態に設定
+
+                let blackCount = 0, whiteCount = 0; // 最終的な石の数をカウント
+                for (let r = 0; r < boardSize; r++) {
+                    for (let c = 0; c < boardSize; c++) {
+                        if (board[r][c] === PLAYER) blackCount++;
+                        if (board[r][c] === AI) whiteCount++;
+                    }
+                }
+                let winMessage = "ゲーム終了！ "; // 勝敗メッセージの初期値
+                if (blackCount > whiteCount) {
+                    winMessage += `あなたの勝ちです (${blackCount} 対 ${whiteCount})。`; // プレイヤーの勝ち
+                    playSound('win'); // 勝ちの音
+                } else if (whiteCount > blackCount) {
+                    winMessage += `AIの勝ちです (${whiteCount} 対 ${blackCount})。`; // AIの勝ち
+                    playSound('lose'); // 負けの音
+                } else {
+                    winMessage += `引き分けです (${blackCount} 対 ${whiteCount})。`; // 引き分け
+                    playSound('draw'); // 引き分けの音
+                }
+                messageElement.textContent = winMessage; // メッセージを表示
+                currentTurnIndicator.textContent = "ゲーム終了"; // ターン表示を「ゲーム終了」に
+            }
+
+            // resetButtonがクリックされたときの処理です。
+            resetButton.addEventListener('click', () => {
+                playSound('click'); // クリック音を鳴らす
+                initializeBoard(); // 盤面を初期化して新しいゲームを開始します。
+            });
+
+            // Initialize（ページ読み込み時の初期設定）
+            titleScreen.style.display = 'flex'; // タイトル画面をデフォルトで表示
+            gameScreen.style.display = 'none'; // ゲーム画面はデフォルトで非表示
+            muteButton.textContent = isMuted ? "ミュート解除" : "ミュート"; // ミュートボタンの初期テキストを設定
+            muteButton.classList.toggle('muted', isMuted); // ミュートボタンの初期スタイルを設定
+        });
+    </script>
+</body>
+</html>
